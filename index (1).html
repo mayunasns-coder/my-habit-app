@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fff0f7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="習慣ログ">
+<title>習慣ログ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fff8fc;
+  --surface: #ffffff;
+  --pink: #f472b6;
+  --pink-light: #fce7f3;
+  --pink-mid: #fbcfe8;
+  --blue: #67e8f9;
+  --blue-light: #e0f7fa;
+  --blue-mid: #a5f3fc;
+  --blue-dark: #0891b2;
+  --amber: #fbbf24;
+  --amber-light: #fef3c7;
+  --text: #4a3550;
+  --muted: #a78bab;
+  --border: rgba(244,114,182,0.15);
+  --border2: rgba(244,114,182,0.3);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-pill: 99px;
+  --shadow: 0 2px 12px rgba(244,114,182,0.1);
+  --shadow-md: 0 4px 20px rgba(244,114,182,0.15);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; }
+.app { max-width: 430px; margin: 0 auto; min-height: 100vh; padding-bottom: 90px; }
+
+header {
+  padding: 44px 20px 16px;
+  background: linear-gradient(160deg, #fff0f7 0%, #e0f7fa 100%);
+  border-bottom: 1px solid var(--border);
+}
+.header-top { display: flex; align-items: center; justify-content: space-between; }
+header h1 { font-size: 26px; font-weight: 700; color: var(--pink); letter-spacing: -0.3px; }
+header h1 span { color: var(--blue-dark); }
+header p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.backup-btn { display: flex; gap: 6px; }
+.icon-btn {
+  width: 36px; height: 36px; border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border2); background: white; font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.15s, box-shadow 0.15s; box-shadow: var(--shadow);
+}
+.icon-btn:hover { transform: scale(1.08); box-shadow: var(--shadow-md); }
+
+.tabs {
+  display: flex; padding: 16px 20px 0; gap: 8px;
+  background: linear-gradient(160deg, #fff0f7 0%, #e0f7fa 100%);
+}
+.tab {
+  flex: 1; padding: 10px; font-size: 14px;
+  font-family: 'Nunito', sans-serif; font-weight: 700;
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill); color: var(--muted);
+  cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+}
+.tab.active.pink { background: var(--pink); border-color: var(--pink); color: white; box-shadow: 0 4px 14px rgba(244,114,182,0.35); }
+.tab.active.blue { background: var(--blue-dark); border-color: var(--blue-dark); color: white; box-shadow: 0 4px 14px rgba(8,145,178,0.3); }
+
+.section { display: none; padding: 20px; }
+.section.active { display: block; }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.stat { border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+.stat.pink { background: var(--pink-light); border: 1.5px solid var(--pink-mid); }
+.stat.blue { background: var(--blue-light); border: 1.5px solid var(--blue-mid); }
+.stat-num { font-size: 28px; font-weight: 700; }
+.stat.pink .stat-num { color: var(--pink); }
+.stat.blue .stat-num { color: var(--blue-dark); }
+.stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; font-weight: 600; }
+
+.input-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.input-row input {
+  flex: 1; padding: 11px 14px; border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border2); background: white;
+  font-size: 14px; font-family: 'Nunito', sans-serif; color: var(--text);
+  outline: none; box-shadow: var(--shadow); transition: border-color 0.15s;
+}
+.input-row input:focus { border-color: var(--pink); }
+.input-row input::placeholder { color: var(--muted); }
+.add-btn {
+  padding: 11px 18px; border-radius: var(--radius-pill); border: none;
+  font-size: 14px; font-family: 'Nunito', sans-serif; font-weight: 700;
+  cursor: pointer; white-space: nowrap; box-shadow: var(--shadow-md);
+  transition: transform 0.15s;
+}
+.add-btn:hover { transform: scale(1.04); }
+.add-btn.pink { background: var(--pink); color: white; }
+.add-btn.blue { background: var(--blue-dark); color: white; }
+
+.item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; background: white;
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 8px; box-shadow: var(--shadow);
+  transition: all 0.15s; animation: pop 0.2s ease;
+}
+.item:hover { border-color: var(--pink-mid); box-shadow: var(--shadow-md); }
+.item.done { opacity: 0.55; }
+.item.done .label { text-decoration: line-through; color: var(--muted); }
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.95) translateY(6px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.check {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid var(--pink-mid); cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; background: white;
+}
+.check.checked { background: var(--pink); border-color: var(--pink); }
+.check.checked::after {
+  content: ''; width: 5px; height: 9px;
+  border: 2.5px solid white; border-top: none; border-left: none;
+  transform: rotate(40deg) translate(-1px,-1px); display: block;
+}
+.label { flex: 1; font-size: 14px; font-weight: 600; line-height: 1.4; }
+.del {
+  width: 28px; height: 28px; border: none; background: none;
+  color: var(--muted); cursor: pointer; font-size: 18px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.del:hover { color: var(--pink); background: var(--pink-light); }
+
+.empty { text-align: center; padding: 40px 0; color: var(--muted); font-size: 14px; font-weight: 600; }
+.empty-icon { font-size: 36px; margin-bottom: 8px; }
+
+.habit-item {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 8px;
+  padding: 12px 14px; box-shadow: var(--shadow);
+  transition: all 0.15s; animation: pop 0.2s ease;
+}
+.habit-item:hover { border-color: var(--blue-mid); box-shadow: var(--shadow-md); }
+.habit-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.habit-label { flex: 1; font-size: 14px; font-weight: 700; }
+.streak {
+  font-size: 11px; font-weight: 700; color: #d97706;
+  background: var(--amber-light); padding: 3px 9px;
+  border-radius: var(--radius-pill); border: 1px solid #fde68a;
+}
+.dots-row { display: flex; gap: 6px; align-items: flex-end; }
+.dot-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dot-day { font-size: 10px; color: var(--muted); font-weight: 700; }
+.dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--blue-mid); cursor: pointer;
+  transition: all 0.15s; background: white;
+}
+.dot.done { background: var(--blue-dark); border-color: var(--blue-dark); box-shadow: 0 0 6px rgba(8,145,178,0.3); }
+.dot.today { border-color: var(--blue-dark); border-width: 2.5px; }
+
+.toast {
+  position: fixed; bottom: 100px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text); color: white;
+  padding: 10px 20px; border-radius: var(--radius-pill);
+  font-size: 13px; font-weight: 700;
+  opacity: 0; transition: all 0.3s; pointer-events: none;
+  white-space: nowrap; z-index: 100;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="header-top">
+      <div>
+        <h1>習慣ログ<span> ✦</span></h1>
+        <p id="date-label"></p>
+      </div>
+      <div class="backup-btn">
+        <button class="icon-btn" onclick="exportData()" title="バックアップ保存">💾</button>
+        <button class="icon-btn" onclick="document.getElementById('import-file').click()" title="データ読み込み">📂</button>
+        <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab pink active" id="tab-todo" onclick="switchTab('todo')">✅ ToDoリスト</button>
+    <button class="tab blue" id="tab-habit" onclick="switchTab('habit')">🌿 習慣トラッカー</button>
+  </div>
+
+  <div id="todo" class="section active">
+    <div class="stats">
+      <div class="stat pink"><div class="stat-num" id="todo-total">0</div><div class="stat-label">タスク合計</div></div>
+      <div class="stat pink"><div class="stat-num" id="todo-done-count">0</div><div class="stat-label">完了済み</div></div>
+    </div>
+    <div class="input-row">
+      <input id="todo-input" placeholder="新しいタスクを追加..." onkeydown="if(event.key==='Enter')addTodo()">
+      <button class="add-btn pink" onclick="addTodo()">＋ 追加</button>
+    </div>
+    <div id="todo-list"></div>
+  </div>
+
+  <div id="habit" class="section">
+    <div class="stats">
+      <div class="stat blue"><div class="stat-num" id="habit-total">0</div><div class="stat-label">習慣数</div></div>
+      <div class="stat blue"><div class="stat-num" id="habit-best">0</div><div class="stat-label">最長連続日数</div></div>
+    </div>
+    <div class="input-row">
+      <input id="habit-input" placeholder="新しい習慣を追加..." onkeydown="if(event.key==='Enter')addHabit()">
+      <button class="add-btn blue" onclick="addHabit()">＋ 追加</button>
+    </div>
+    <div id="habit-list"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DAYS = 7;
+let state = { todos: [], habits: [] };
+try { const s = localStorage.getItem('habit-log-v1'); if(s) state = JSON.parse(s); } catch(e){}
+
+function save() { try { localStorage.setItem('habit-log-v1', JSON.stringify(state)); } catch(e){} }
+function dayKey(offset) {
+  const d = new Date(); d.setDate(d.getDate() - offset);
+  return d.toISOString().slice(0,10);
+}
+function dayShort(offset) {
+  const d = new Date(); d.setDate(d.getDate() - offset);
+  return ['日','月','火','水','木','金','土'][d.getDay()];
+}
+function today() { return dayKey(0); }
+
+const now = new Date();
+document.getElementById('date-label').textContent =
+  now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日（' +
+  ['日','月','火','水','木','金','土'][now.getDay()] + '）';
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function switchTab(tab) {
+  ['todo','habit'].forEach(id => {
+    document.getElementById('tab-'+id).classList.remove('active');
+    document.getElementById(id).classList.remove('active');
+  });
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById(tab).classList.add('active');
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'habit-log-' + today() + '.json'; a.click();
+  showToast('💾 バックアップを保存しました！');
+}
+
+function importData(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if(data.todos && data.habits) {
+        state = data; save(); renderTodos(); renderHabits();
+        showToast('📂 データを読み込みました！');
+      } else { showToast('⚠️ ファイルが正しくありません'); }
+    } catch(err) { showToast('⚠️ 読み込みに失敗しました'); }
+  };
+  reader.readAsText(file); e.target.value = '';
+}
+
+function addTodo() {
+  const inp = document.getElementById('todo-input');
+  const text = inp.value.trim(); if(!text) return;
+  state.todos.push({ id: Date.now(), text, done: false });
+  inp.value = ''; save(); renderTodos();
+}
+function toggleTodo(id) {
+  const t = state.todos.find(t=>t.id===id); if(t) t.done = !t.done;
+  save(); renderTodos();
+}
+function delTodo(id) {
+  state.todos = state.todos.filter(t=>t.id!==id); save(); renderTodos();
+}
+function renderTodos() {
+  const done = state.todos.filter(t=>t.done);
+  const active = state.todos.filter(t=>!t.done);
+  document.getElementById('todo-total').textContent = state.todos.length;
+  document.getElementById('todo-done-count').textContent = done.length;
+  const list = document.getElementById('todo-list');
+  if(!state.todos.length) {
+    list.innerHTML='<div class="empty"><div class="empty-icon">🌸</div>タスクを追加してみよう！</div>'; return;
+  }
+  list.innerHTML = [...active,...done].map(t=>`
+    <div class="item${t.done?' done':''}">
+      <div class="check${t.done?' checked':''}" onclick="toggleTodo(${t.id})"></div>
+      <span class="label">${escHtml(t.text)}</span>
+      <button class="del" onclick="delTodo(${t.id})">×</button>
+    </div>`).join('');
+}
+
+function addHabit() {
+  const inp = document.getElementById('habit-input');
+  const text = inp.value.trim(); if(!text) return;
+  state.habits.push({ id: Date.now(), text, log: {} });
+  inp.value = ''; save(); renderHabits();
+}
+function toggleHabit(id, key) {
+  const h = state.habits.find(h=>h.id===id); if(!h) return;
+  h.log[key] = !h.log[key]; save(); renderHabits();
+}
+function delHabit(id) {
+  state.habits = state.habits.filter(h=>h.id!==id); save(); renderHabits();
+}
+function getStreak(log) {
+  let s=0; for(let i=0;i<60;i++) { if(log[dayKey(i)]) s++; else break; } return s;
+}
+function renderHabits() {
+  document.getElementById('habit-total').textContent = state.habits.length;
+  const best = state.habits.reduce((m,h)=>Math.max(m,getStreak(h.log)),0);
+  document.getElementById('habit-best').textContent = best;
+  const list = document.getElementById('habit-list');
+  if(!state.habits.length) {
+    list.innerHTML='<div class="empty"><div class="empty-icon">🌿</div>習慣を追加してみよう！</div>'; return;
+  }
+  const days = Array.from({length:DAYS},(_,i)=>DAYS-1-i);
+  list.innerHTML = state.habits.map(h=>{
+    const streak = getStreak(h.log);
+    const dots = days.map(i=>{
+      const k=dayKey(i);
+      return `<div class="dot-wrap">
+        <div class="dot${h.log[k]?' done':''}${i===0?' today':''}" onclick="toggleHabit(${h.id},'${k}')"></div>
+        <span class="dot-day">${dayShort(i)}</span>
+      </div>`;
+    }).join('');
+    return `<div class="habit-item">
+      <div class="habit-top">
+        <span class="habit-label">${escHtml(h.text)}</span>
+        ${streak>0?`<span class="streak">🔥 ${streak}日連続</span>`:''}
+        <button class="del" onclick="delHabit(${h.id})">×</button>
+      </div>
+      <div class="dots-row">${dots}</div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+renderTodos(); renderHabits();
+</script>
+</body>
+</html>
